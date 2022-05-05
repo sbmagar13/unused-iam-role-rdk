@@ -1,0 +1,13 @@
+{
+  "Version": "1.0",
+  "Parameters": {
+    "RuleName": "detect_unused_iam_role",
+    "Description": "detect_unused_iam_role",
+    "SourceRuntime": "python3.9",
+    "CodeKey": "detect_unused_iam_roleeu-central-1.zip",
+    "InputParameters": "{}",
+    "OptionalParameters": "{}",
+    "SourceEvents": "AWS::IAM::Role"
+  },
+  "Tags": "[]"
+}
