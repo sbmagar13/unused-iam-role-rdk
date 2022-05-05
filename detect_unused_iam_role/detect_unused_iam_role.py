@@ -8,6 +8,16 @@ import os
 import re
 
 
+# Evaluation strings for Config evaluations
+COMPLIANT = 'COMPLIANT'
+NON_COMPLIANT = 'NON_COMPLIANT'
+
+# MAX UNUSED DAYS
+MAX_UNUSED_DAYS = 30
+
+# Set to True to get the lambda to assume the Role attached on the Config service (useful for cross-account).
+ASSUME_ROLE_MODE = False
+
 # Configure boto retries
 BOTO_CONFIG = Config(retries=dict(max_attempts=5))
 
@@ -16,22 +26,12 @@ DEFAULT_RESOURCE_TYPE = 'AWS::IAM::Role'
 
 CONFIG_ROLE_TIMEOUT_SECONDS = 60
 
-# Set to True to get the lambda to assume the Role attached on the Config service (useful for cross-account).
-ASSUME_ROLE_MODE = False
-
-# Evaluation strings for Config evaluations
-COMPLIANT = 'COMPLIANT'
-NON_COMPLIANT = 'NON_COMPLIANT'
-
-# MAX UNUSED DAYS
-MAX_UNUSED_DAYS = 30
-
 
 # This gets the client after assuming the Config service role either in the same AWS account or cross-account.
-def get_client(service, execution_role_arn):
+def get_client(service, exec_role_arn):
     if not ASSUME_ROLE_MODE:
         return boto3.client(service)
-    credentials = get_assume_role_credentials(execution_role_arn)
+    credentials = get_assume_role_credentials(exec_role_arn)
     return boto3.client(service, aws_access_key_id=credentials['AccessKeyId'],
                         aws_secret_access_key=credentials['SecretAccessKey'],
                         aws_session_token=credentials['SessionToken'],
@@ -39,10 +39,10 @@ def get_client(service, execution_role_arn):
                         )
 
 
-def get_assume_role_credentials(execution_role_arn):
+def get_assume_role_credentials(exec_role_arn):
     sts_client = boto3.client('sts')
     try:
-        assume_role_response = sts_client.assume_role(RoleArn=execution_role_arn,
+        assume_role_response = sts_client.assume_role(RoleArn=exec_role_arn,
                                                       RoleSessionName="configLambdaExecution",
                                                       DurationSeconds=CONFIG_ROLE_TIMEOUT_SECONDS)
         return assume_role_response['Credentials']
