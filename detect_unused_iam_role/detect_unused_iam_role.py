@@ -26,7 +26,6 @@ DEFAULT_RESOURCE_TYPE = 'AWS::IAM::Role'
 
 CONFIG_ROLE_TIMEOUT_SECONDS = 60
 
-
 # This gets the client after assuming the Config service role either in the same AWS account or cross-account.
 def get_client(service, exec_role_arn):
     if not ASSUME_ROLE_MODE:
